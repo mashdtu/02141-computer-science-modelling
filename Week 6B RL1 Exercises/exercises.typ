@@ -789,6 +789,8 @@ A naïve teacher provides the following exercise "construct a DFA for a coffee m
 
 
 == Are those DFAs language-equivalent? Find out by applying the algorithm seen in class for testing equivalence of DFA.
+(Chatgpt solution lol)
+
 *Initial partition:*
 - $G_1 = \{s_5, s_6, s'_5, s''_3\}$ (all accepting states)
 - $G_2 = \{s_0, s_1, s_2, s_3, s_4, s'_0, s'_1, s'_2, s'_3, s'_4, s''_0, s''_1, s''_2\}$ (all non-accepting states)
