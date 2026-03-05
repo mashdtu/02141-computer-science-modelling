@@ -391,10 +391,9 @@ c ac bb bc ca cb cc aac abb abc aca acb acc bab bac bba bbb bbc bca bcb bcc caa 
 These are the 30 strings of length $<= 3$, accepted by the automaton.
 
 
-
-
-
 == Convert the automaton to a DFA.
+
+
 
 
 
@@ -414,7 +413,7 @@ Design $epsilon$-NFAs for the following languages. Try to use $epsilon$-transiti
 
 
 = Correctness of the subset construction
-In class we have seen the proof of correctness of the subset construction, i..e. that the language of an NFA $N = (Q, Sigma, delta_N, q_0, F)$ is the same as the language of the DFA $D = Q_D, Sigma, delta_D, {q_0}, F_D$ obtained by the subset of construction. The key property proven is
+In class we have seen the proof of correctness of the subset construction, i.e. that the language of an NFA $N = (Q, Sigma, delta_N, q_0, F)$ is the same as the language of the DFA $D = Q_D, Sigma, delta_D, {q_0}, F_D$ obtained by the subset of construction. The key property proven is
 $
     forall q in Q, w in Sigma^* : delta^*_N (q, w) = delta^*_D ({q}, w).
 $ 
