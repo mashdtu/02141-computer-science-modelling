@@ -1,16 +1,47 @@
 #import "@preview/diagraph:0.3.6": *
+#import "@preview/chic-hdr:0.5.0": *
+#import "@preview/rexllent:0.4.0": *
 
 #show heading: set block(above: 2em)
 #show heading: set block(below: 1em)
 #show link: it => underline(text(fill: blue)[#it])
-#show heading.where(level: 3): set heading(outlined: false)
+#show selector(<nonumber>): set heading(numbering: none)
+
+#let first-heading = state("first-heading", true)
+#show heading.where(level: 1): it => {
+    context if first-heading.get() {
+        first-heading.update(false)
+        it
+    } else {
+        pagebreak(weak: true) + it
+    }
+}
+
+#let numberingH(c) = {
+    if c.numbering != none {
+        return numbering(c.numbering, ..counter(heading).at(c.location()))
+    }
+    return ""
+}
+
+#let currentH(level) = {
+    let elems = query(selector(heading.where(level: level)).after(here()))
+
+    if elems.len() != 0 and elems.first().location().page() == here().page() {
+        return [#numberingH(elems.first()) #elems.first().body]
+    } else {
+        elems = query(selector(heading.where(level: level)).before(here()))
+        if elems.len() != 0 {
+            return [#numberingH(elems.last()) #elems.last().body]
+        }
+    }
+    return ""
+}
 
 #set page(
     paper: "a4",
     margin: (x: 2.5cm, y: 2.5cm),
-    numbering: "1 of 1",
     number-align: right,
-    header: none
 )
 
 #set par(
@@ -19,7 +50,7 @@
 
 #set text(
     font: "New Computer Modern",
-    size: 12pt
+    size: 12pt,
 )
 
 #set heading(
@@ -29,23 +60,24 @@
 #let ansline = line(
     start: (0%, 0%),
     end: (100%, 0%),
-    stroke: (thickness: 1pt, dash: "dashed")
+    stroke: (thickness: 1pt, dash: "dashed"),
 )
 
 #let title = "Regular Languages 2"
 #let subtitle = "Non-Deterministic Finite Automata"
-#let subject = "02141 Computer Science Modelling"
+#let subject = "0241 Computer Science Modelling"
 #let date = "February 13th, 2026"
 
 #let author = (if read("../.secret").trim() == "" { "name" } else { read("../.secret").trim() },)
 
 #align(center)[
-    #text(32pt)[#smallcaps(title)] \ #text(18pt)[#subtitle] \ #text(fill:black.lighten(25%), [#subject])
+    #text(32pt)[#smallcaps(title)] \ #text(18pt)[#subtitle] \ #text(fill: black.lighten(25%), [#subject])
 ]
 
 #{
-    grid(columns: (1fr,) * author.len(),
-        column-gutter: 2pt,
+    grid(
+        columns: (1fr,) * author.len(),
+        column-gutter: -120pt,
         ..author.map(a => align(center)[#a])
     )
 }
@@ -55,22 +87,15 @@
 ]
 
 
-//#pagebreak()
 #outline()
-
-//#v(16pt)
-//#grid(columns: (1cm, 1fr, 1cm),
-//    column-gutter: 2pt,
-//    [],
-//    [],
-//    []
-//)
-
-    
-
 #pagebreak()
 
-
+#counter(page).update(1)
+#show: chic.with(
+    chic-footer(
+        right-side: "Page " + context str(counter(page).get().first()) + " of " + str(counter(page).final().first()),
+    ),
+)
 = Building and Understanding NFAs
 Give non-deterministic finite automata to accept the following languages. Try to take advantage of non-determinism as much as possible.
 
@@ -323,9 +348,50 @@ Consider the folllowing $epsilon$-NFA.
 )
 
 == Compute the $epsilon$-closure of each state.
+The NFA can be modelled:
+#raw-render(//width: 85%,
+    ```
+    digraph {
+        rankdir=LR
+        node [shape = circle]
+        g [label="", color=invis]
+
+        p[label="p"]
+        q[label="q"]
+        r[label="r", shape=doublecircle]
+
+        g -> p
+        p -> p[label="a"]
+        p -> q[label="b"]
+        p -> r[label="c"]
+        q -> p[label=epsilon]
+        q -> q[label="a"]
+        q -> r[label="b"]
+        r -> q[label=epsilon]
+        r -> r[label="a"]
+        r -> p[label="c"]
+    }
+```)
 
 
 == Give all the strings of length three or less accepted by the automaton.
+Informally, the automaton accepts the following languages:
+- Any string of `a`'s `b`'s and `c`'s with an uneven number of `c`'s.
+- Any string of `a`'s `b`'s and `c`'s with at least 2 `b`'s which are uninterupted by a `c`.
+
+Formally, this is written as:
+```
+([abc]*(c[abc]*c[abc]*)*c[abc]*)|([abc]*b[ab]*b[abc]*)
+```
+
+All the strings of length three or less can be found by matching each 3-character combination of `a`'s, `b`'s and `c`'s with the regular expression. This is done using an `F#` script#footnote([The `F#` script can be viewed in Appendix A.]). The script yields the following output:
+```
+c ac bb bc ca cb cc aac abb abc aca acb acc bab bac bba bbb bbc bca bcb bcc caa cab cac cba cbb cbc cca ccb ccc
+```
+These are the 30 strings of length $<= 3$, accepted by the automaton.
+
+
+
 
 
 == Convert the automaton to a DFA.
@@ -354,3 +420,9 @@ $
 $ 
 
 == Prove this property again on your own. _Hint_: Use induction on the length of $w$ or alternatively on the structure of $w$.
+
+
+
+#pagebreak()
+= Appendix A: F\# Regex Matcher Script <nonumber>
+#raw(read("code/regex_matcher.fs"), lang: "fs", block: true)
