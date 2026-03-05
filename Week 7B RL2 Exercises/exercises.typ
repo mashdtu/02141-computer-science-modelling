@@ -235,7 +235,7 @@ Give non-deterministic finite automata to accept the following languages. Try to
 
 == \! Convert the above NFA to a DFA and informally describe the language it accepts.
 The NFA can be modelled:
-#raw-render(//width: 100%,
+#raw-render(width: 85%,
     ```
     digraph {
         rankdir=LR
@@ -257,6 +257,52 @@ The NFA can be modelled:
         r -> p[label="0"]
         r -> r[label="0"]
         r -> t[label="1"]
+    }
+```)
+
+Informally, the NFA accepts the following languages:
+- Any string of `0`'s and `1`'s ending with `00` -- where the NFA finishes in state $s$.
+- Any string of `0`'s and `1`'s ending with `01` -- where the NFA finishes in state $t$.
+
+The NFA is converted to a DFA by analysing the transition table. For $p$:
+- If `0`, then $p -> {p, q}$.
+- If `1`, then $p -> p$.
+
+Two nodes $p$ and ${p, q}$ are created, with a transition $p$ to ${p, q}$ with label `0` and a transition from $p$ to $p$ with label `1`. We analyse the node ${p, q}$:
+- If `0`, then $p -> {p, q}$ and $q -> {r, s}$. Thus ${p, q} -> {p, q, r, s}$.
+- If `1`, then $p -> p$ and $q -> t$. Thus ${p, q} -> {p, t}$.
+
+Two nodes ${p, q, r, s}$ and ${p, t}$ are created, with a transition from ${p, q}$ to ${p, q, r, s}$ with label `0` and a transition from ${p, q}$ to ${p, t}$ with label `1`. We have two new nodes to analyse, we start with ${p, q, r, s}$.
+- If `0`, then $p -> {p, q}$, $q -> {r, s}$, $r -> {p, r}$ and $s -> emptyset$. Thus ${p, q, r, s} -> {p, q, r, s}$.
+- If `1`, then $p -> p$, $q -> t$, $r -> t$ and $s -> emptyset$. Thus ${p, q, r, s} -> {p, t}$.
+
+We draw a transition from ${p, q, r, s}$ to itself with label `0`, along with a transition from ${p, q, r, s}$ to ${p, t}$ with label `1`. We analyse the node ${p, t}$.
+- If `0`, then $p -> {p, q}$ and $t -> emptyset$. Thus ${p, t} -> {p, q}$.
+- If `1`, then $p -> p$ and $t -> emptyset$. Thus ${p, t} -> p$.
+
+We draw a transition from ${p, t}$ to ${p, q}$ with label `0`, and a transition from ${p, t}$ to $p$ with label `1`. Following this analysis, we produce the following DFA model.
+
+#raw-render(width: 85%,
+    ```
+    digraph {
+        rankdir=LR
+        node [shape = circle]
+        g [label="", color=invis]
+
+        p[label="p"]
+        pq[label="{p,q}"]
+        pt[label="{p,t}", shape=doublecircle]
+        pqrs[label="{p,q,r,s}", shape=doublecircle]
+
+        g -> p
+        p -> pq[label="0"]
+        p -> p[label="1"]
+        pq -> pqrs[label="0"]
+        pq -> pt[label="1"]
+        pqrs -> pqrs[label="0"]
+        pqrs -> pt[label="1"]
+        pt -> pq[label="0"]
+        pt -> p[label="1"]
     }
 ```)
 
