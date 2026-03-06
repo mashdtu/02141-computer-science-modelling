@@ -1,16 +1,47 @@
 #import "@preview/diagraph:0.3.6": *
+#import "@preview/chic-hdr:0.5.0": *
+#import "@preview/rexllent:0.4.0": *
 
 #show heading: set block(above: 2em)
 #show heading: set block(below: 1em)
 #show link: it => underline(text(fill: blue)[#it])
-#show heading.where(level: 3): set heading(outlined: false)
+#show selector(<nonumber>): set heading(numbering: none)
+
+#let first-heading = state("first-heading", true)
+#show heading.where(level: 1): it => {
+    context if first-heading.get() {
+        first-heading.update(false)
+        it
+    } else {
+        pagebreak(weak: true) + it
+    }
+}
+
+#let numberingH(c) = {
+    if c.numbering != none {
+        return numbering(c.numbering, ..counter(heading).at(c.location()))
+    }
+    return ""
+}
+
+#let currentH(level) = {
+    let elems = query(selector(heading.where(level: level)).after(here()))
+
+    if elems.len() != 0 and elems.first().location().page() == here().page() {
+        return [#numberingH(elems.first()) #elems.first().body]
+    } else {
+        elems = query(selector(heading.where(level: level)).before(here()))
+        if elems.len() != 0 {
+            return [#numberingH(elems.last()) #elems.last().body]
+        }
+    }
+    return ""
+}
 
 #set page(
     paper: "a4",
     margin: (x: 2.5cm, y: 2.5cm),
-    numbering: "1 of 1",
     number-align: right,
-    header: none
 )
 
 #set par(
@@ -19,7 +50,7 @@
 
 #set text(
     font: "New Computer Modern",
-    size: 12pt
+    size: 12pt,
 )
 
 #set heading(
@@ -29,23 +60,24 @@
 #let ansline = line(
     start: (0%, 0%),
     end: (100%, 0%),
-    stroke: (thickness: 1pt, dash: "dashed")
+    stroke: (thickness: 1pt, dash: "dashed"),
 )
 
 #let title = "Formal Methods 3"
 #let subtitle = "Program Graphs -- Guarded Commands"
-#let subject = "02141 Computer Science Modelling"
+#let subject = "0241 Computer Science Modelling"
 #let date = "February 17th, 2026"
 
 #let author = (if read("../.secret").trim() == "" { "name" } else { read("../.secret").trim() },)
 
 #align(center)[
-    #text(32pt)[#smallcaps(title)] \ #text(18pt)[#subtitle] \ #text(fill:black.lighten(25%), [#subject])
+    #text(32pt)[#smallcaps(title)] \ #text(18pt)[#subtitle] \ #text(fill: black.lighten(25%), [#subject])
 ]
 
 #{
-    grid(columns: (1fr,) * author.len(),
-        column-gutter: 2pt,
+    grid(
+        columns: (1fr,) * author.len(),
+        column-gutter: -120pt,
         ..author.map(a => align(center)[#a])
     )
 }
@@ -66,22 +98,16 @@
     []
 )
 
-//#pagebreak()
+#pagebreak()
 #outline()
-
-//#v(16pt)
-//#grid(columns: (1cm, 1fr, 1cm),
-//    column-gutter: 2pt,
-//    [],
-//    [],
-//    []
-//)
-
-    
-
 #pagebreak()
 
-
+#counter(page).update(1)
+#show: chic.with(
+    chic-footer(
+        right-side: "Page " + context str(counter(page).get().first()) + " of " + str(counter(page).final().first()),
+    ),
+)
 = More Loops (#((sym.star.filled,) * 1).join())
 In this task our goal is to extend the Guarded Command Language with a `break` and `continue` by a new command `repeat C until b` where `C` is a command and `b` is a boolean expression. Intuitively, the command `repeat C until b` first executes `C`. After that it checks whether `b` golds or not. If yes, it stops execution. Otherwise it keeps executing `C` and checking `b` again.
 
