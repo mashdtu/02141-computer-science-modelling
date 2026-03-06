@@ -97,7 +97,7 @@
     ),
 )
 
-= Task 1
+= Semantics (15%)
 == Question A
 == Question B
 == Question C
@@ -105,21 +105,33 @@
 == Question E
 
 
-= Task 2
+= Formal Languages (20%)
 == Question A
 == Question B
 == Question C
 == Question D
 
 
-= Task 3
+= Program Verification (20%)
+== Question A
+== Question B
+== Question C
+
+
+= Program Analysis (10%)
+== Question A
+== Question B
+
+
+= Language-based Security (10%)
 == Question A
 == Question B
 == Question C
 == Question D
+== Question E
 
 
-= Task 4
+= Context-free Languages (15%)
 == Question A
 == Question B
 == Question C
@@ -127,5 +139,10 @@
 == Question E
 == Question F
 
+
+= Model Checking (5%)
+
+
+= Induction Proofs (5%)
 
 
