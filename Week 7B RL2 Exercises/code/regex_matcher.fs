@@ -3,7 +3,7 @@ module RegexMatcher
 open System
 open System.Text.RegularExpressions
 
-let pattern = @"^([abc]*(c[abc]*c[abc]*)*c[abc]*)|([abc]*b[ab]*b[abc]*)$"
+let pattern = @"^([abc]*c[abc]*|[abc]*b[abc]*b[abc]*)$"
 let regex = Regex(pattern)
 
 let generateStrings () =

@@ -348,8 +348,19 @@ Consider the folllowing $epsilon$-NFA.
 )
 
 == Compute the $epsilon$-closure of each state.
+The $epsilon$-closure of each state is the set of states which can be "reached" using en $epsilon$-transition, including the state itself. Remember, that if a state `A` has an $epsilon$-transition to a state `B`, and state `B` has an $epsilon$-transition to state `C`, then state `A` also has an epsilon transition to state `C`. I.e. the $epsilon$-closure is recursively defined and includes the $epsilon$-closure of each state within the $epsilon$-closure. Analysing the $epsilon$-NFA transition table:
+$
+    epsilon"-closure"(p) &= {p}
+    quad quad
+    epsilon"-closure"(q) &= {p, q}
+    quad quad
+    epsilon"-closure"(r) &= {p, q, r}
+$
+
+
+== Give all the strings of length three or less accepted by the automaton.
 The NFA can be modelled:
-#raw-render(//width: 85%,
+#raw-render(width: 45%,
     ```
     digraph {
         rankdir=LR
@@ -373,15 +384,13 @@ The NFA can be modelled:
     }
 ```)
 
-
-== Give all the strings of length three or less accepted by the automaton.
 Informally, the automaton accepts the following languages:
-- Any string of `a`'s `b`'s and `c`'s with an uneven number of `c`'s.
-- Any string of `a`'s `b`'s and `c`'s with at least 2 `b`'s which are uninterupted by a `c`.
+- Any string of `a`'s `b`'s and `c`'s with at least one `c`.
+- Any string of `a`'s `b`'s and `c`'s with at least two `b`'s.
 
 Formally, this is written as:
 ```
-([abc]*(c[abc]*c[abc]*)*c[abc]*)|([abc]*b[ab]*b[abc]*)
+^([abc]*c[abc]*|[abc]*b[abc]*b[abc]*)$
 ```
 
 All the strings of length three or less can be found by matching each 3-character combination of `a`'s, `b`'s and `c`'s with the regular expression. This is done using an `F#` script#footnote([The `F#` script can be viewed in Appendix A.]). The script yields the following output:
@@ -392,9 +401,58 @@ These are the 30 strings of length $<= 3$, accepted by the automaton.
 
 
 == Convert the automaton to a DFA.
+We analyse the transition table, starting with the initial state $p$.
+- If `a`, then $p -> epsilon"-closure"({p}) = {p}$.
+- If `b`, then $p -> epsilon"-closure"({q}) = {p, q}$.
+- If `c`, then $p -> epsilon"-closure"({r}) = {p, q, r}$.
 
+We add three new states $p$, ${p, q}$ and ${p, q, r}$. We analyse ${p, q}$.
+- If `a`, then ${p, q} -> epsilon"-closure"({p, q}) = {p, q}$.
+- If `b`, then ${p, q} -> epsilon"-closure"({q, r}) = {p, q, r}$.
+- If `c`, then ${p, q} -> epsilon"-closure"({r}) = {p, q, r}$.
 
+We analyse ${p, q, r}$.
+- If `a`, then ${p, q, r} -> epsilon"-closure"({p, q, r}) = {p, q, r}$.
+- If `b`, then ${p, q, r} -> epsilon"-closure"({q, r}) = {p, q, r}$.
+- If `c`, then ${p, q, r} -> epsilon"-closure"({p, r}) = {p, q, r}$.
 
+Following this analysis, we produce the following DFA model.
+
+#grid(columns: (1fr, 1fr),
+    [
+        #raw-render(width: 90%,
+            ```
+            digraph {
+                rankdir=LR
+                node [shape = circle]
+                g [label="", color=invis]
+
+                p[label="p"]
+                pq[label="{p,q}"]
+                pqr[label="{p,q,r}", shape=doublecircle]
+
+                p -> p[label="a"]
+                p -> pq[label="b"]
+                p -> pqr[label="c"]
+
+                pq -> pq[label="a"]
+                pq -> pqr[label="b, c"]
+
+                pqr -> pqr[label="a, b, c"]
+            }
+        ```)
+    ],
+    [
+        #text(size: 10pt, [
+            #table( columns: (1fr, 1fr, 1fr, 1fr),
+                [],             [`a`],              [`b`],              [`c`],
+                [$-> p$],       [${p}$],            [${p, q}$],         [${p, q, r}$],
+                [${p, q}$],     [${p, q}$],         [${p, q, r}$],      [${p, q, r}$],
+                [$*{p, q, r}$], [${p, q, r}$],      [${p, q, r}$],      [${p, q, r}$]
+            )
+        ])
+    ]
+)
 
 
 
@@ -402,12 +460,226 @@ These are the 30 strings of length $<= 3$, accepted by the automaton.
 Design $epsilon$-NFAs for the following languages. Try to use $epsilon$-transitions to simplify your design.
 
 == The set of strings consistion of zero or more $a$'s, followed by zero or more $b$'s, followed by zero or more $c$'s.
+#grid(columns: (1fr, 1fr),
+    [
+        #raw-render(width: 90%,
+            ```
+            digraph {
+                rankdir=LR
+                node [shape = circle]
+                g [label="", color=invis]
+
+                p[label="p"]
+                q[label="q"]
+                r[label="r", shape=doublecircle]
+
+                g -> p
+                p -> p[label="a"]
+                q -> q[label="b"]
+                r -> r[label="c"]
+                p -> q[label=epsilon]
+                q -> r[label=epsilon]
+            }
+        ```)
+    ],
+    [
+        #text(size: 10pt, [
+            #table( columns: (1fr, 1fr, 1fr, 1fr, 1fr),
+                [],         [$epsilon$],    [$a$],              [$b$],              [$c$],
+                [$-> p$],   [${q}$],        [${p}$],            [$emptyset$],       [$emptyset$],
+                [$q$],      [${r}$],        [$emptyset$],       [${q}$],            [$emptyset$],
+                [$*r$],     [$emptyset$],   [$emptyset$],       [$emptyset$],       [${r}$]
+            )
+        ])
+    ]
+)
 
 
-== \! The set of strings the consist of either $01$ repeated one or more times or $010$ repeated one or more times.
+== \! The set of strings that consist of either $01$ repeated one or more times or $010$ repeated one or more times.
+This language can be split in two. (1) The set of strings that consist of $01$ repeated one or more times. And (2) The set of strings that consist of $010$ repeated one or more times. An NFA that accepts language (1) can be illustrated:
+#grid(columns: (1fr, 1fr),
+    [
+        #raw-render(width: 90%,
+            ```
+            digraph {
+                rankdir=LR
+                node [shape = circle]
+                g [label="", color=invis]
+
+                p1[label="p_1"]
+                p2[label="p_2"]
+                p3[label="p_3", shape=doublecircle]
+
+                g -> p1
+                p1 -> p2[label="0"]
+                p2 -> p3[label="1"]
+                p3 -> p1[label=epsilon]
+            }
+        ```)
+    ],
+    [
+        #text(size: 10pt, [
+            #table( columns: (1fr, 1fr, 1fr, 1fr),
+                [],             [$epsilon$],        [`0`],              [`1`],
+                [$-> p_1$],     [$emptyset$],       [${p_2}$],          [$emptyset$],
+                [$p_2$],        [$emptyset$],       [$emptyset$],       [${p_3}$],
+                [$*p_3$],       [${p_1}$],          [$emptyset$],       [$emptyset$]
+            )
+        ])
+    ]
+)
+
+An NFA that accepts language (2) can be illustrated:
+#grid(columns: (1fr, 1fr),
+    [
+        #raw-render(width: 90%,
+            ```
+            digraph {
+                rankdir=LR
+                node [shape = circle]
+                g [label="", color=invis]
+
+                q1[label="q_1"]
+                q2[label="q_2"]
+                q3[label="q_3"]
+                q4[label="q_4", shape=doublecircle]
+
+                g -> q1
+                q1 -> q2[label="0"]
+                q2 -> q3[label="1"]
+                q3 -> q4[label="0"]
+                q4 -> q1[label=epsilon]
+            }
+        ```)
+    ],
+    [
+        #text(size: 10pt, [
+            #table( columns: (1fr, 1fr, 1fr, 1fr),
+                [],             [$epsilon$],        [`0`],              [`1`],
+                [$-> q_1$],     [$emptyset$],       [${q_2}$],          [$emptyset$],
+                [$q_2$],        [$emptyset$],       [$emptyset$],       [${q_3}$],
+                [$q_3$],        [$emptyset$],       [${q_4}$],          [$emptyset$],
+                [$*q_4$],       [${q_1}$],          [$emptyset$],       [$emptyset$]
+            )
+        ])
+    ]
+)
+
+The two automata are combined with a new initial state $s$
+#grid(columns: (1fr, 1fr),
+    [
+        #raw-render(width: 90%,
+            ```
+            digraph {
+                rankdir=LR
+                node [shape = circle]
+                g [label="", color=invis]
+
+                s [label="s"]
+                p1 [label="p_1"]
+                p2 [label="p_2"]
+                p3 [label="p_3", shape=doublecircle]
+                q1 [label="q_1"]
+                q2 [label="q_2"]
+                q3 [label="q_3"]
+                q4 [label="q_4", shape=doublecircle]
+
+                s -> p1 [label=epsilon]
+                s -> q1 [label=epsilon]
+
+                p1 -> p2 [label="0"]
+                p2 -> p3 [label="1"]
+                p3 -> p1 [label=epsilon]
+
+                q1 -> q2 [label="0"]
+                q2 -> q3 [label="1"]
+                q3 -> q4 [label="0"]
+                q4 -> q1 [label=epsilon]
+            }
+        ```)
+    ],
+    [
+        #text(size: 10pt, [
+            #table( columns: (1fr, 1fr, 1fr, 1fr),
+                [],             [$epsilon$],        [`0`],              [`1`],
+                [$-> s$],       [${p_1, q_1}$],     [$emptyset$],       [$emptyset$],
+                [$p_1$],        [$emptyset$],       [${p_2}$],          [$emptyset$],
+                [$p_2$],        [$emptyset$],       [$emptyset$],       [${p_3}$],
+                [$*p_3$],       [${p_1}$],          [$emptyset$],       [$emptyset$],
+                [$q_1$],        [$emptyset$],       [${q_2}$],          [$emptyset$],
+                [$q_2$],        [$emptyset$],       [$emptyset$],       [${q_3}$],
+                [$q_3$],        [$emptyset$],       [${q_4}$],          [$emptyset$],
+                [$*q_4$],       [${q_1}$],          [$emptyset$],       [$emptyset$]
+            )
+        ])
+    ]
+)
+
 
 
 == \! The set of strings $0$'s and $1$'s such that at least one of the last ten positions is a $1$.
+#raw-render(width: 100%,
+    ```
+digraph {
+    rankdir=TB
+    node [shape = circle]
+
+    // States
+    {
+        rank=same
+        start [label="", shape=point, color=invis]
+        r0 [label="r0"]
+        r1 [label="r1", shape=doublecircle]
+        r2 [label="r2", shape=doublecircle]
+        r3 [label="r3", shape=doublecircle]
+        r4 [label="r4", shape=doublecircle]
+    }
+
+    {
+        rank=same
+        r5 [label="r5", shape=doublecircle]
+        r6 [label="r6", shape=doublecircle]
+        r7 [label="r7", shape=doublecircle]
+        r8 [label="r8", shape=doublecircle]
+        r9 [label="r9", shape=doublecircle]
+        r10 [label="r10", shape=doublecircle]
+    }
+
+    // Start
+    start -> r0
+
+    // Transitions
+    r0 -> r0 [label="0,1", tailport=ne, headport=_]
+    r0 -> r1 [label="1"]
+    r1 -> r2 [label="0,1"]
+    r2 -> r3 [label="0,1"]
+    r3 -> r4 [label="0,1"]
+    r4 -> r5 [label="0,1"]
+    
+    r6 -> r5 [label="0,1", dir=back]
+    r7 -> r6 [label="0,1", dir=back]
+    r8 -> r7 [label="0,1", dir=back]
+    r9 -> r8 [label="0,1", dir=back]
+    r10 -> r9 [label="0,1", dir=back]
+}
+```)
+
+#text(size: 10pt, [
+    #table( columns: (1fr, 1fr, 1fr),
+        [],            [`0`],           [`1`],
+        [$-> r_0$],    [${r_0}$],       [${r_0, r_1}$],
+        [$*r_1$],      [${r_2}$],       [${r_2}$],
+        [$*r_2$],      [${r_3}$],       [${r_3}$],
+        [$*r_3$],      [${r_4}$],       [${r_4}$],
+        [$*r_4$],      [${r_5}$],       [${r_5}$],
+        [$*r_5$],      [${r_6}$],       [${r_6}$],
+        [$*r_6$],      [${r_7}$],       [${r_7}$],
+        [$*r_7$],      [${r_8}$],       [${r_8}$],
+        [$*r_8$],      [${r_9}$],       [${r_9}$],
+        [$*r_9$],      [${r_10}$],      [${r_10}$],
+        [$*r_10$],     [$emptyset$],    [$emptyset$]
+    )
+])
 
 
 
@@ -419,6 +691,8 @@ $
 $ 
 
 == Prove this property again on your own. _Hint_: Use induction on the length of $w$ or alternatively on the structure of $w$.
+
+
 
 
 
