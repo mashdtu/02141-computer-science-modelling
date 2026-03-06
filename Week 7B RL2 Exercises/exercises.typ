@@ -692,6 +692,40 @@ $
 
 == Prove this property again on your own. _Hint_: Use induction on the length of $w$ or alternatively on the structure of $w$.
 
+*Proof by induction on the length of $w$:*
+
+*Base case:* $|w| = 0$, so $w = epsilon$.
+- $delta^*_N(q, epsilon) = q$ (definition of extended transition function)
+- $delta^*_D({q}, epsilon) = {q}$ (definition of extended transition function)
+- Therefore the property holds.
+
+*Inductive case:* Assume the property holds for all strings of length $n$. Let $w = w'a$ where $|w'| = n$ and $a in Sigma$.
+
+By the inductive hypothesis, we have:
+$
+    delta^*_N(q, w') = delta^*_D({q}, w')
+$
+
+Let $S = delta^*_D({q}, w')$. We need to show:
+$
+    delta^*_N(q, w'a) = delta^*_D({q}, w'a)
+$
+
+For the NFA:
+$
+    delta^*_N(q, w'a) = union_(p in delta^*_N(q, w')) delta_N(p, a)
+                      = union_(p in S) delta_N(p, a)
+$
+
+For the DFA:
+$
+    delta^*_D({q}, w'a) = delta_D(delta^*_D({q}, w'), a)
+                        = delta_D(S, a)
+                        = union_(p in S) delta_N(p, a)
+$
+
+Since both equal $union_(p in S) delta_N(p, a)$, we have $delta^*_N(q, w'a) = delta^*_D({q}, w'a)$, completing the induction.
+
 
 
 
