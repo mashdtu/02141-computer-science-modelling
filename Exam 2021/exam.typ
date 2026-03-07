@@ -63,10 +63,10 @@
     stroke: (thickness: 1pt, dash: "dashed"),
 )
 
-#let title = "Practice Exam 2023"
-#let subtitle = "Set from Exam Period S23"
+#let title = "Practice Exam 2021"
+#let subtitle = "Set from Exam Period S21"
 #let subject = "02141 Computer Science Modelling"
-#let date = "May 23rd, 2023"
+#let date = "May 26th, 2021"
 
 #let author = (if read("../.secret").trim() == "" { "name" } else { read("../.secret").trim() },)
 
@@ -97,52 +97,57 @@
     ),
 )
 
-= Semantics (15%)
-== Question A
-== Question B
-== Question C
-== Question D
-== Question E
+= Exercises on Formal Methods
+== Program Graphs (10%)
+=== Question A
+=== Question B
+=== Question C
+=== Question D
+=== Question E
 
 
-= Formal Languages (20%)
-== Question A
-== Question B
-== Question C
-== Question D
+== Program Verification and Analysis (20%)
+=== Question A
+=== Question B
+=== Question C
 
 
-= Program Verification (20%)
-== Question A
-== Question B
-== Question C
+== Information Flow (10%)
+=== Question A
+=== Question B
+=== Question C
 
 
-= Program Analysis (10%)
-== Question A
-== Question B
+== Model Checking (10%)
+=== Question A
+=== Question B
+=== Question C
+=== Question D
+=== Question E
+=== Question F
+=== Question G
+=== Question H
+=== Question I
+=== Question justify
 
 
-= Language-based Security (10%)
-== Question A
-== Question B
-== Question C
-== Question D
-== Question E
+= Exercises on Context-free Languages
+== Exercise 5 (25%)
+=== Question A
+=== Question B
+=== Question C
+=== Question D
+=== Question E
 
 
-= Context-free Languages (15%)
-== Question A
-== Question B
-== Question C
-== Question D
-== Question E
-== Question F
+
+= Exercises on Regular Languages
+== Exercise 6 (25%)
+=== Question A
+=== Question B
+=== Question C
+=== Question D
 
 
-= Model Checking (5%)
-
-
-= Induction Proofs (5%)
 
 

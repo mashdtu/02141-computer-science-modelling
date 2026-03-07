@@ -63,10 +63,10 @@
     stroke: (thickness: 1pt, dash: "dashed"),
 )
 
-#let title = "Practice Exam 2023"
-#let subtitle = "Set from Exam Period S23"
+#let title = "Practice Exam 2022"
+#let subtitle = "Set from Exam Period S22"
 #let subject = "02141 Computer Science Modelling"
-#let date = "May 23rd, 2023"
+#let date = "May 20th, 2022"
 
 #let author = (if read("../.secret").trim() == "" { "name" } else { read("../.secret").trim() },)
 
@@ -112,26 +112,21 @@
 == Question D
 
 
-= Program Verification (20%)
+= Program Verification (15%)
+== Question A
+== Question B
+
+
+= Program Analysis (13%)
 == Question A
 == Question B
 == Question C
 
 
-= Program Analysis (10%)
-== Question A
-== Question B
+= Information Flow (7%)
 
 
-= Language-based Security (10%)
-== Question A
-== Question B
-== Question C
-== Question D
-== Question E
-
-
-= Context-free Languages (15%)
+= Context-free Languages (20%)
 == Question A
 == Question B
 == Question C
@@ -140,9 +135,6 @@
 == Question F
 
 
-= Model Checking (5%)
-
-
-= Induction Proofs (5%)
+= Model Checking (10%)
 
 

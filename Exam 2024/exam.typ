@@ -63,10 +63,10 @@
     stroke: (thickness: 1pt, dash: "dashed"),
 )
 
-#let title = "Practice Exam 2025"
-#let subtitle = "Set from Exam Period S25"
+#let title = "Practice Exam 2024"
+#let subtitle = "Set from Exam Period S24"
 #let subject = "02141 Computer Science Modelling"
-#let date = "May 23rd, 2025"
+#let date = "May 27th, 2024"
 
 #let author = (if read("../.secret").trim() == "" { "name" } else { read("../.secret").trim() },)
 
