@@ -150,7 +150,6 @@ $
 
 
 = Even More Loops (#((sym.star.filled,) * 2).join())
-
 We extend the Guarded Command Language with a `break` and `continue` by a new command `loop GC pool` for which we generate edges as follows:
 $
     #text([*edges*])_(b c)(q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`loop GC pool`]) bracket.r.stroked (q_b, q_c)
@@ -162,6 +161,13 @@ _Hint_: A program _simulates_ another one if it can always reach the same final 
 
 
 == Explain informally how the above command differs from the command `do GC od`.
+The command `do GC od` requires a boolean value $b$ acting as an entry/exit condition for the loop. I.e. before any commends are executed, the program evaluates whether or not $b$ is true.
+- If $b$ evaluates to `true`, the program executes `GC`.
+- If $b$ evaluates to `false`, the program breaks/exits the loop.
+
+On the contrary, the `loop GC pool` command repeats `GC` indefinitely with no entry/exit condition. Instead, `loop GC pool` requires an explicit `break` command within `GC` to be executed in order to break/exit the loop.
+
+In terms of edge relation, no *edge*$(q_circle, "done"bracket.stroked #text([`GC`]) bracket.stroked.r, q_circle.filled)$ is defined for `loop GC pool`, which relies solely on a `break` command eventually being executed.
 
 
 == Is there a way to _simulate_ `do GC od` using `loop GC pool` and `break`?
