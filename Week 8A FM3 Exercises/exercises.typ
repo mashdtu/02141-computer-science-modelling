@@ -112,7 +112,38 @@
 In this task our goal is to extend the Guarded Command Language with a `break` and `continue` by a new command `repeat C until b` where `C` is a command and `b` is a boolean expression. Intuitively, the command `repeat C until b` first executes `C`. After that it checks whether `b` golds or not. If yes, it stops execution. Otherwise it keeps executing `C` and checking `b` again.
 
 == Give a formal definition of the edge relation for `repeat C until b`, i.e. define $#text([*edges*])_(b c) (q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`repeat C until b`]) bracket.r.stroked (q_b, q_c)$.
-
+The BNF grammar is extended.
+$
+    C ::= ...
+    | #text([`break`])
+    | #text([`continue`])
+    | #text([`repeat`]) C #text([`until`]) b
+$
+The edge relation for `repeat C until b` is related to the edge definition for `do C od`.
+#text(size: 11pt)[
+    $
+        bold("edges")_(b c) (q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`repeat C until b`]) bracket.r.stroked (q_b, q_c)
+        &=
+        bold("edges")_(b c) (q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`C ; do`]) not#text([`b`]) -> #text([`C od`]) bracket.r.stroked (q_b, q_c)
+$
+]
+Applying this relation gives the following formal definition of the edge relation.
+#text(size: 11pt)[
+$
+        bold("edges")_(b c) (q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`repeat C until b`]) bracket.r.stroked (q_b, q_c)
+        quad = quad
+        #text([`let`]) &q #text([`be fresh`])
+        \
+        &E_1 = bold("edges")(q_#sym.circle #sym.arrow.r.squiggly q) bracket.l.stroked #text([`C`]) bracket.r.stroked (q_circle.filled, q)
+        \
+        &E_2 = bold("edges")(q #sym.arrow.r.squiggly q) bracket.l.stroked not#text([`b`]) -> #text([`C`]) bracket.r.stroked (q_#sym.circle.filled, q)
+        \
+        &E_3 = {(q, b, q_#sym.circle.filled)}
+        \
+        #text([`in`]) #h(5pt)
+        &E_1 union E_2 union E_3
+    $
+]
 
 
 
