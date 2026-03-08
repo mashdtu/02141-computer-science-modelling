@@ -87,15 +87,18 @@
 ]
 
 #v(16pt)
-#grid(columns: (1cm, 1fr, 1cm),
+#grid(
+    columns: (1cm, 1fr, 1cm),
     column-gutter: 2pt,
     [],
-    [- The number of #sym.star.filled's gives a rough indicator of the task's difficulty. You should aim to solve at least all tasks with at most three #sym.star.filled's. Tasks with more stars can be hard or require mathematical background that you should have from previous courses.
+    [
+        - The number of #sym.star.filled's gives a rough indicator of the task's difficulty. You should aim to solve at least all tasks with at most three #sym.star.filled's. Tasks with more stars can be hard or require mathematical background that you should have from previous courses.
 
-    - You can always ask us for feedback or help during the exercise class.
+        - You can always ask us for feedback or help during the exercise class.
 
-    - We recommend that you first read all tasks during class. Make sure that you have a rough approach for every task in mind before you start working on the details. Ask for help if a task is unclear such that you do not get stuck when we are not there to help.],
-    []
+        - We recommend that you first read all tasks during class. Make sure that you have a rough approach for every task in mind before you start working on the details. Ask for help if a task is unclear such that you do not get stuck when we are not there to help.
+    ],
+    [],
 )
 
 #pagebreak()
@@ -111,7 +114,7 @@
 = More Loops (#((sym.star.filled,) * 1).join())
 In this task our goal is to extend the Guarded Command Language with a `break` and `continue` by a new command `repeat C until b` where `C` is a command and `b` is a boolean expression. Intuitively, the command `repeat C until b` first executes `C`. After that it checks whether `b` golds or not. If yes, it stops execution. Otherwise it keeps executing `C` and checking `b` again.
 
-== Give a formal definition of the edge relation for `repeat C until b`, i.e. define $#text([*edges*])_(b c) (q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`repeat C until b`]) bracket.r.stroked (q_b, q_c)$.
+== Give a formal definition of the edge relation for `repeat C until b`, i.e. define $#text([*edges*]) _(b c) (q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`repeat C until b`]) bracket.r.stroked (q_b, q_c)$.
 The BNF grammar is extended.
 $
     C ::= ...
@@ -125,11 +128,11 @@ The edge relation for `repeat C until b` is related to the edge definition for `
         bold("edges")_(b c) (q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`repeat C until b`]) bracket.r.stroked (q_b, q_c)
         &=
         bold("edges")_(b c) (q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`C ; do`]) not#text([`b`]) -> #text([`C od`]) bracket.r.stroked (q_b, q_c)
-$
+    $
 ]
 Applying this relation gives the following formal definition of the edge relation.
 #text(size: 11pt)[
-$
+    $
         bold("edges")_(b c) (q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`repeat C until b`]) bracket.r.stroked (q_b, q_c)
         quad = quad
         #text([`let`]) &q #text([`be fresh`])
@@ -152,9 +155,9 @@ $
 = Even More Loops (#((sym.star.filled,) * 2).join())
 We extend the Guarded Command Language with a `break` and `continue` by a new command `loop GC pool` for which we generate edges as follows:
 $
-    #text([*edges*])_(b c)(q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`loop GC pool`]) bracket.r.stroked (q_b, q_c)
+    #text([*edges*]) _(b c)(q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`loop GC pool`]) bracket.r.stroked (q_b, q_c)
     =
-    #text([*edges*])_(b c)(q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`GC`]) bracket.r.stroked (q_#sym.circle.filled, q_#sym.circle)
+    #text([*edges*]) _(b c)(q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle) bracket.l.stroked #text([`GC`]) bracket.r.stroked (q_#sym.circle.filled, q_#sym.circle)
 $
 
 _Hint_: A program _simulates_ another one if it can always reach the same final configurations from the same initial configurations, possibly by performing different actions. That is, $C_1$ _simulates_ $C_2$ if, for all $sigma in #text([*Mem*])$, we have $chevron.l q_triangle.r ; sigma chevron.r arrow.r.double.long^* chevron.l q_triangle.l.filled ; sigma' chevron.r$ holds for the program graph of $C_1$ if and only if $chevron.l q_triangle.r ; sigma chevron.r arrow.r.double.long^* chevron.l q_triangle.l.filled ; sigma' chevron.r$ holds for the program graph of $C_2$.
@@ -165,26 +168,103 @@ The command `do GC od` requires a boolean value $b$ acting as an entry/exit cond
 - If $b$ evaluates to `true`, the program executes `GC`.
 - If $b$ evaluates to `false`, the program breaks/exits the loop.
 
-On the contrary, the `loop GC pool` command repeats `GC` indefinitely with no entry/exit condition. Instead, `loop GC pool` requires an explicit `break` command within `GC` to be executed in order to break/exit the loop.
-
-In terms of edge relation, no *edge*$(q_circle, "done"bracket.stroked #text([`GC`]) bracket.stroked.r, q_circle.filled)$ is defined for `loop GC pool`, which relies solely on a `break` command eventually being executed.
+On the contrary, the `loop GC pool` command repeats `GC` indefinitely with no entry/exit condition. Instead, `loop GC pool` requires an explicit `break` command within `GC` to be executed in order to break/exit the loop. In terms of edge relation, no *edge*$(q_circle, "done"bracket.stroked #text([`GC`]) bracket.stroked.r, q_circle.filled)$ is defined for `loop GC pool`, which relies solely on a `break` command eventually being executed.
 
 
 == Is there a way to _simulate_ `do GC od` using `loop GC pool` and `break`?
-Expanding `GC` to `b` $->$ `C` for `do GC od` and expanding `GC` to `GC`$#h(0pt)_#text(`1`)$` [] GC`$#h(0pt)_#text(`2`)$ we get the following.
+Expanding `GC` to `b` $->$ `C` for `do GC od` and expanding `GC` to `GC`$#h(0pt) _#text(`1`)$` [] GC`$#h(0pt) _#text(`2`)$ we get the following.
 
-`do b -> C od ` and ` loop GC`$#h(0pt)_#text(`1`)$` [] GC`$#h(0pt)_#text(`2`)$` pool`.
+`do b -> C od ` and ` loop GC`$#h(0pt) _#text(`1`)$` [] GC`$#h(0pt) _#text(`2`)$` pool`.
 
-Further expanding `GC`$#h(0pt)_#text(`1`)$ to `b -> C` and expanding `C` to `break`, we get the following.
-
+Further expanding `GC`$#h(0pt) _#text(`1`)$ to `¬b -> break` we get the following.
 ```
-loop
-    GC
-    [] b -> break
-pool
+loop ¬b -> break [] GC pool
 ```
 
-This simulates the boolean value $b$ acting as a exit condition. As such, yes -- there is a way to simulate `do GC od` using `loop GC pool` and `break`.
+This simulates the boolean value $b$ acting as a repetition condition. The value $not b$ may often be expressed as "done$bracket.stroked #text([`GC`]) bracket.stroked.r$". To prove that these _simulate_ eachother, the edge relation for each construct is defined.
+
+For `loop` done$bracket.stroked #text([`GC`]) bracket.stroked.r$ `-> break [] GC pool`, the edge relation is defined as follows.
+$
+    &#text([*edges*])_(b c)
+        (   
+            q_circle
+            arrow.r.squiggly
+            q_circle.filled
+        )
+        bracket.stroked
+            #text([`loop` done$bracket.stroked #text([`GC`]) bracket.stroked.r$ `-> break [] GC pool`])
+        bracket.stroked.r
+        (q_b, q_c)
+    \
+    = space
+    &#text([*edges*])_(b c)
+        (
+            q_circle
+            arrow.r.squiggly
+            q_circle
+        )
+        bracket.stroked
+            #text([done$bracket.stroked #text([`GC`]) bracket.stroked.r$ `-> break [] GC`])
+        bracket.stroked.r
+        (q_circle.filled, q_circle)
+    \
+    = space
+    &#text([*edges*])_(b c)
+        (
+            q_circle
+            arrow.r.squiggly
+            q_circle
+        )
+        bracket.stroked
+            #text([`GC`])
+        bracket.stroked.r
+        (q_circle.filled, q_circle)
+    union
+        {
+            (
+                q_circle,
+                "done"bracket.stroked #text([`GC`]) bracket.stroked.r,
+                q_circle.filled
+            )
+        }
+$
+For `do GC od`, the edge relation is defined as follows.
+$
+    &#text([*edges*])_(b c)
+        (   
+            q_circle
+            arrow.r.squiggly
+            q_circle.filled
+        )
+        bracket.stroked
+            #text([`do GC od`])
+        bracket.stroked.r
+        (q_b, q_c)
+    \
+    = space
+    &#text([*edges*])_(b c)
+        (   
+            q_circle
+            arrow.r.squiggly
+            q_circle.filled
+        )
+        bracket.stroked
+            #text([`GC`])
+        bracket.stroked.r
+        (
+            q_circle.filled,
+            q_circle
+        )
+    union
+        {
+            (
+                q_circle,
+                "done"bracket.stroked #text([`GC`]) bracket.stroked.r,
+                q_circle.filled
+            )
+        }
+$
+As the edge relations are the same, the constructs are functionally equivalent. Thus, yes -- there is a way to simulate `do GC od` using `loop GC pool` and `break`.
 
 
 
@@ -194,9 +274,9 @@ This simulates the boolean value $b$ acting as a exit condition. As such, yes --
 
 
 = Deterministic Semantics (#((sym.star.filled,) * 3).join())
-Let $(#text([*E*]), d) = #text([*edges*])_("det") (q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`GC`]) bracket.r.stroked (#text[`false`])$ for some guarded command `GC`.
+Let $(#text([*E*]), d) = #text([*edges*]) _("det") (q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`GC`]) bracket.r.stroked (#text[`false`])$ for some guarded command `GC`.
 
-== Show that $not d$ is logically equivalent to `done`$bracket.l.stroked #text([`GC`]) bracket.r.stroked$, i.e. for all memories $sigma$, $cal(B)bracket.l.stroked not d bracket.r.stroked (sigma) = cal(B) bracket.l.stroked #text([`done`])bracket.l.stroked #text([`GC`]) bracket.r.stroked bracket.r.stroked (sigma)$. _Hint_: You may want to prove the slightly more general statement $cal(B) bracket.l.stroked not d bracket.r.stroked = cal(B) bracket.l.stroked #text([`done`])bracket.l.stroked #text([`GC`]) bracket.r.stroked and not d' bracket.r.stroked$, where $(#text([*E*]), d) = #text([*edges*])_"det" (q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`GC`]) bracket.r.stroked (d')$ for all guarded commands `GC` and boolean expressions $d'$.
+== Show that $not d$ is logically equivalent to `done`$bracket.l.stroked #text([`GC`]) bracket.r.stroked$, i.e. for all memories $sigma$, $cal(B)bracket.l.stroked not d bracket.r.stroked (sigma) = cal(B) bracket.l.stroked #text([`done`])bracket.l.stroked #text([`GC`]) bracket.r.stroked bracket.r.stroked (sigma)$. _Hint_: You may want to prove the slightly more general statement $cal(B) bracket.l.stroked not d bracket.r.stroked = cal(B) bracket.l.stroked #text([`done`])bracket.l.stroked #text([`GC`]) bracket.r.stroked and not d' bracket.r.stroked$, where $(#text([*E*]), d) = #text([*edges*]) _"det" (q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`GC`]) bracket.r.stroked (d')$ for all guarded commands `GC` and boolean expressions $d'$.
 
 
 
