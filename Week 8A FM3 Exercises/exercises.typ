@@ -157,7 +157,7 @@ $
     #text([*edges*])_(b c)(q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`GC`]) bracket.r.stroked (q_#sym.circle.filled, q_#sym.circle)
 $
 
-_Hint_: A program _simulates_ another one if it can always reach the same final configurations from the same initial configurations, possibly by performing different actions. That is, $C_1$ _simulates_ $C_2$ if, for all $sigma in #text([*Mem*])$, we have $chevron.l q_triangle.r ; sigma chevron.r arrow.r.double.long \ ^* chevron.l q_triangle.l.filled ; sigma' chevron.r$ holds for the program graph of $C_1$ if and only if $chevron.l q_triangle.r ; sigma chevron.r arrow.r.double.long \ ^* chevron.l q_triangle.l.filled ; sigma' chevron.r$ holds for the program graph of $C_2$.
+_Hint_: A program _simulates_ another one if it can always reach the same final configurations from the same initial configurations, possibly by performing different actions. That is, $C_1$ _simulates_ $C_2$ if, for all $sigma in #text([*Mem*])$, we have $chevron.l q_triangle.r ; sigma chevron.r arrow.r.double.long^* chevron.l q_triangle.l.filled ; sigma' chevron.r$ holds for the program graph of $C_1$ if and only if $chevron.l q_triangle.r ; sigma chevron.r arrow.r.double.long^* chevron.l q_triangle.l.filled ; sigma' chevron.r$ holds for the program graph of $C_2$.
 
 
 == Explain informally how the above command differs from the command `do GC od`.
@@ -171,6 +171,21 @@ In terms of edge relation, no *edge*$(q_circle, "done"bracket.stroked #text([`GC
 
 
 == Is there a way to _simulate_ `do GC od` using `loop GC pool` and `break`?
+Expanding `GC` to `b` $->$ `C` for `do GC od` and expanding `GC` to `GC`$#h(0pt)_#text(`1`)$` [] GC`$#h(0pt)_#text(`2`)$ we get the following.
+
+`do b -> C od ` and ` loop GC`$#h(0pt)_#text(`1`)$` [] GC`$#h(0pt)_#text(`2`)$` pool`.
+
+Further expanding `GC`$#h(0pt)_#text(`1`)$ to `b -> C` and expanding `C` to `break`, we get the following.
+
+```
+loop
+    GC
+    [] b -> break
+pool
+```
+
+This simulates the boolean value $b$ acting as a exit condition. As such, yes -- there is a way to simulate `do GC od` using `loop GC pool` and `break`.
+
 
 
 == Is there a way to _simulate_ `loop GC pool` using `do GC od`?
