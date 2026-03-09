@@ -230,7 +230,7 @@ $
               (
                   q_circle
                   arrow.r.squiggly
-                  q_circle.filled
+                  q_circle
               )
               bracket.stroked
               #text([`do GC od`])
@@ -240,7 +240,7 @@ $
               (
                   q_circle
                   arrow.r.squiggly
-                  q_circle.filled
+                  q_circle
               )
               bracket.stroked
               #text([`GC`])
@@ -263,6 +263,61 @@ As the edge relations are the same, the constructs are functionally equivalent. 
 
 
 == Is there a way to _simulate_ `loop GC pool` using `do GC od`?
+In order to make `do GC od` repeat indefinitely, `GC` is expanded to `true -> C`. The edge relation for both `loop GC pool` and `do true -> C` are defined.
+
+For `do true -> C` the edge relation is defined as follows.
+$
+            & #text([*edges*]) _(b c)
+              (
+                  q_circle
+                  arrow.r.squiggly
+                  q_circle.filled
+              )
+              bracket.stroked
+              #text([`do true -> C od`])
+              bracket.stroked.r
+              (q_b, q_c) \
+    = space & #text([*edges*]) _(b c)
+              (
+                  q_circle
+                  arrow.r.squiggly
+                  q_circle
+              )
+              bracket.stroked
+              #text([`C`])
+              bracket.stroked.r
+              (
+                  q_circle.filled,
+                  q_circle
+              )
+              union
+              {
+                  (
+                      q_circle,
+                      not#text([`true`]),
+                      q_circle.filled
+                  )
+              } \
+    = space & #text([*edges*]) _(b c)
+              (
+                  q_circle
+                  arrow.r.squiggly
+                  q_circle
+              )
+              bracket.stroked
+              #text([`C`])
+              bracket.stroked.r
+              (
+                  q_circle.filled,
+                  q_circle
+              )
+$
+
+For `loop GC pool` the edge relation is predefined by the assignment.
+$
+    &#text([*edges*]) _(b c)(q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`loop GC pool`]) bracket.r.stroked (q_b, q_c) \
+    = space & #text([*edges*]) _(b c)(q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle) bracket.l.stroked #text([`GC`]) bracket.r.stroked (q_#sym.circle.filled, q_#sym.circle)
+$
 
 
 
