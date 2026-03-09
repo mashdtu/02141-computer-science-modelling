@@ -263,6 +263,8 @@ As the edge relations are the same, the constructs are functionally equivalent. 
 
 
 == Is there a way to _simulate_ `loop GC pool` using `do GC od`?
+*Naive approach*
+
 In order to make `do GC od` repeat indefinitely, `GC` is expanded to `true -> C`. The edge relation for both `loop GC pool` and `do true -> C` are defined.
 
 For `do true -> C` the edge relation is defined as follows.
@@ -318,7 +320,105 @@ $
     &#text([*edges*]) _(b c)(q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`loop GC pool`]) bracket.r.stroked (q_b, q_c) \
     = space & #text([*edges*]) _(b c)(q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle) bracket.l.stroked #text([`GC`]) bracket.r.stroked (q_#sym.circle.filled, q_#sym.circle)
 $
+The edge relation for these are not equivalent, as one loops across a command `C` while another loops across a guarded command `GC`.
 
+*Correct approach*
+
+Instead of expanding `do GC od` to `do true -> C od`, the construct is expanded to `do` done$bracket.stroked #text([`GC`]) bracket.stroked.r$ `-> skip [] GC od`. This differs from the original construct, as done$bracket.stroked #text([`GC`]) bracket.stroked.r$ is defined to be the exit point of the `GC` conditional statement. I.e. if `GC` is expanded to `b -> C`, then done$bracket.stroked #text([`GC`]) bracket.stroked.r$ is equivalent to $not$`b`. The edge relations are defined.
+
+For `do` done$bracket.stroked #text([`GC`]) bracket.stroked.r$ `-> skip [] GC od` the edge relation is defined as follows.
+#text(size: 10pt, [
+    $
+                & #text([*edges*]) _(b c)
+                  (
+                      q_circle
+                      arrow.r.squiggly
+                      q_circle.filled
+                  )
+                  bracket.stroked
+                  #text([`do` done$bracket.stroked #text([`GC`]) bracket.stroked.r$ `-> skip [] GC od`])
+                  bracket.stroked.r
+                  (q_b, q_c) \
+        = space & #text([*edges*]) _(b c)
+                  (
+                      q_circle
+                      arrow.r.squiggly
+                      q_circle
+                  )
+                  bracket.stroked
+                  #text([done$bracket.stroked #text([`GC`]) bracket.stroked.r$ `-> skip`])
+                  bracket.stroked.r
+                  (
+                      q_circle.filled,
+                      q_circle
+                  )
+                  union
+                  #text([*edges*]) _(b c)
+                  (
+                      q_circle
+                      arrow.r.squiggly
+                      q_circle
+                  )
+                  bracket.stroked
+                  #text([`GC`])
+                  bracket.stroked.r
+                  (
+                      q_circle.filled,
+                      q_circle
+                  )
+                  union
+                  {
+                      (
+                          q_circle,
+                          #text([done$bracket.stroked$`GC`$bracket.stroked.r$]),
+                          q_circle.filled
+                      )
+                  } \
+        = space & #text([*edges*]) _(b c)
+                  (
+                      q_circle
+                      arrow.r.squiggly
+                      q_circle
+                  )
+                  bracket.stroked
+                  #text([`GC`])
+                  bracket.stroked.r
+                  (
+                      q_circle.filled,
+                      q_circle
+                  )
+                  union
+                  {
+                      (
+                          q_circle,
+                          #text([done$bracket.stroked$`GC`$bracket.stroked.r$]),
+                          q_circle
+                      )
+                  } \
+        = space & #text([*edges*]) _(b c)
+                  (
+                      q_circle
+                      arrow.r.squiggly
+                      q_circle
+                  )
+                  bracket.stroked
+                  #text([`GC`])
+                  bracket.stroked.r
+                  (
+                      q_circle.filled,
+                      q_circle
+                  )
+    $
+])
+
+For `loop GC pool` the edge relation is again predefined by the assignment.
+#text(size: 10pt, [
+    $
+        &#text([*edges*]) _(b c)(q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle.filled) bracket.l.stroked #text([`loop GC pool`]) bracket.r.stroked (q_b, q_c) \
+        = space & #text([*edges*]) _(b c)(q_#sym.circle #sym.arrow.r.squiggly q_#sym.circle) bracket.l.stroked #text([`GC`]) bracket.r.stroked (q_#sym.circle.filled, q_#sym.circle)
+    $
+])
+These two constructs simulate eachother as the same edge relation can be defined for both of them. Thus, yes -- there is a way to simulate `loop GC pool` using `do GC od`.
 
 
 
