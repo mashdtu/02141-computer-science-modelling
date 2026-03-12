@@ -431,7 +431,7 @@ Let $(#text([*E*]), d) = #text([*edges*]) _("det") (q_#sym.circle #sym.arrow.r.s
 
 
 = The Coincidence Property (#((sym.star.filled,) * 4).join())
-If we want to define one set of memories for all programs in the Guarded Command Language, then we need to choose an infinite set *Var* of variables. However, so far we always assumed that *var* is the finite set of variables that actually appear in a program. In the lectures slides, there is a proof of the fact that, for (simplified) arithmetic expressions, the presence or absence of additional variables that do not actually appear in any expressions does not matter. This is sometimes referred to as the "coincidence property". The goal of this task is to check that the coincidence property also holds for (simplified) boolean expressions, given by the following EBNF grammar:
+If we want to define one set of memories for all programs in the Guarded Command Language, then we need to choose an infinite set *Var* of variables. However, so far we always assumed that *Var* is the finite set of variables that actually appear in a program. In the lectures slides, there is a proof of the fact that, for (simplified) arithmetic expressions, the presence or absence of additional variables that do not actually appear in any expressions does not matter. This is sometimes referred to as the "coincidence property". The goal of this task is to check that the coincidence property also holds for (simplified) boolean expressions, given by the following EBNF grammar:
 $
     b ::=
     #text([`true`])
